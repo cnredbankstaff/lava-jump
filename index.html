@@ -42,6 +42,20 @@
       50% { transform: translateY(-10px) scale(1.2); opacity: 1; }
     }
     
+    @keyframes coinSpin {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    
+    .coin {
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle at 30% 30%, #ffd700, #ffed4e);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.8), inset -2px -2px 5px rgba(0,0,0,0.3);
+      animation: coinSpin 2s linear infinite;
+    }
+    
     .platform {
       background: linear-gradient(180deg, #4a4a4a 0%, #2d2d2d 50%, #1a1a1a 100%);
       box-shadow: 0 4px 0 #0a0a0a, inset 0 2px 0 rgba(255,255,255,0.1);
@@ -54,22 +68,36 @@
       border-radius: 4px;
     }
     
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .shop-item {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+      border: 2px solid #a78bfa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     
-    .coin {
-      background: radial-gradient(circle at 30% 30%, #ffd700, #ffed4e);
-      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.5);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .shop-item button {
+      background: #10b981;
+      padding: 6px 12px;
+      border-radius: 4px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
     }
     
-    .asteroid {
-      background: radial-gradient(circle at 30% 30%, #8b8680, #5a5a5a);
-      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.5);
-      border-radius: 50%;
+    .shop-item button:hover:not(:disabled) {
+      background: #059669;
+      transform: scale(1.05);
+    }
+    
+    .shop-item button:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
@@ -82,31 +110,31 @@
    </div><!-- Score & Timer -->
    <div class="absolute top-4 left-4 z-20 bg-black/50 px-4 py-2 rounded-lg">
     <p class="game-font text-white text-xl">Score: <span id="score" class="text-yellow-400">0</span></p>
-    <p class="game-font text-white text-lg">💰 <span id="coin-count" class="text-yellow-400">0</span></p>
+    <p class="game-font text-white text-lg">🪙 Coins: <span id="coins" class="text-yellow-400">0</span></p>
     <p class="game-font text-white text-lg">Lava Reset: <span id="timer" class="text-orange-400">30</span>s</p>
-   </div><!-- Instructions & Shop -->
-   <div id="instructions" class="absolute top-4 right-4 z-20 bg-black/50 px-4 py-2 rounded-lg">
-    <p class="game-font text-white text-lg">Press <span class="text-yellow-400">↑</span> to Jump!</p>
-    <p class="game-font text-sm text-gray-300">Lava rises every 5s</p>
-   </div><!-- Shop Button --> <button id="shop-btn" class="absolute top-24 right-4 z-20 game-font bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 shadow-lg text-lg"> 🛒 Shop </button> <!-- Shop Panel -->
-   <div id="shop-panel" class="absolute inset-0 z-40 bg-black/80 hidden flex items-center justify-center">
-    <div class="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-lg max-w-md w-11/12 border-4 border-purple-500">
-     <h2 class="game-font text-3xl text-yellow-400 mb-4 text-center">SHOP</h2>
-     <p class="game-font text-white text-center mb-6">Coins: <span id="shop-coins" class="text-yellow-400 text-2xl">0</span></p>
-     <div class="space-y-3 mb-6"><!-- Double Jump --> <button class="shop-item w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white p-3 rounded-lg transition-all transform hover:scale-105" data-upgrade="double-jump" data-cost="50"> <p class="game-font text-lg">Double Jump</p><p class="text-sm">Cost: <span class="font-bold">50 coins</span></p></button> <!-- Slow Lava --> <button class="shop-item w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600 text-white p-3 rounded-lg transition-all transform hover:scale-105" data-upgrade="slow-lava" data-cost="75"> <p class="game-font text-lg">Slow Lava (30s)</p><p class="text-sm">Cost: <span class="font-bold">75 coins</span></p></button> <!-- Shield --> <button class="shop-item w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white p-3 rounded-lg transition-all transform hover:scale-105" data-upgrade="shield" data-cost="100"> <p class="game-font text-lg">Shield (1 hit)</p><p class="text-sm">Cost: <span class="font-bold">100 coins</span></p></button> <!-- Bigger Player --> <button class="shop-item w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white p-3 rounded-lg transition-all transform hover:scale-105" data-upgrade="bigger-player" data-cost="60"> <p class="game-font text-lg">Bigger Player</p><p class="text-sm">Cost: <span class="font-bold">60 coins</span></p></button>
-     </div><button id="close-shop-btn" class="w-full game-font text-xl bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all"> Close </button>
+   </div><!-- Shop Button --> <button id="shop-btn" class="absolute top-4 right-4 z-20 game-font text-lg bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-lg">🛍️ Shop</button> <!-- Shop Panel -->
+   <div id="shop-panel" class="absolute inset-0 z-40 bg-black/80 flex items-center justify-center hidden">
+    <div class="bg-gradient-to-b from-purple-900 to-purple-800 p-8 rounded-lg max-w-md w-11/12 max-h-96 overflow-y-auto">
+     <div class="flex justify-between items-center mb-6">
+      <h2 class="game-font text-3xl text-yellow-400">Shop</h2><button id="close-shop" class="game-font text-2xl text-white hover:text-yellow-400">✕</button>
+     </div>
+     <div id="shop-items" class="space-y-3"><!-- Shop items will be generated here -->
+     </div>
     </div>
+   </div><!-- Instructions -->
+   <div id="instructions" class="absolute bottom-4 left-4 z-20 bg-black/50 px-4 py-2 rounded-lg">
+    <p class="game-font text-white text-lg">Press <span class="text-yellow-400">↑</span> to Jump!</p>
+    <p class="game-font text-sm text-gray-300">← → to Move | Collect coins!</p>
    </div><!-- Game Over Screen -->
    <div id="game-over" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/80 hidden">
     <h2 class="game-font text-6xl text-red-500 mb-4" style="text-shadow: 3px 3px 0 #ff4500;">GAME OVER!</h2>
     <p class="game-font text-2xl text-white mb-2">Final Score: <span id="final-score" class="text-yellow-400">0</span></p>
-    <p class="game-font text-xl text-white mb-4">Coins Earned: <span id="final-coins" class="text-yellow-400">0</span></p><button id="restart-btn" class="game-font text-2xl bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-8 py-3 rounded-lg mt-4 hover:from-orange-600 hover:to-yellow-600 transition-all transform hover:scale-105 shadow-lg"> Play Again </button>
+    <p class="game-font text-xl text-white mb-4">Coins Earned: <span id="final-coins" class="text-yellow-400">0</span></p><button id="restart-btn" class="game-font text-2xl bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-8 py-3 rounded-lg mt-4 hover:from-orange-600 hover:to-yellow-600 transition-all transform hover:scale-105 shadow-lg">Play Again</button>
    </div><!-- Game Canvas -->
    <div id="game-area" class="absolute inset-0"><!-- Player -->
-    <div id="player" class="player absolute w-10 h-10 z-10"></div><!-- Platforms Container -->
-    <div id="platforms"></div><!-- Coins Container -->
-    <div id="coins"></div><!-- Asteroids Container -->
-    <div id="asteroids"></div><!-- Lava -->
+    <div id="player" class="player absolute w-10 h-10 z-10"></div><!-- Coins Container -->
+    <div id="coins-container"></div><!-- Platforms Container -->
+    <div id="platforms"></div><!-- Lava -->
     <div id="lava" class="lava absolute bottom-0 left-0 right-0 z-5" style="height: 50px;">
      <div class="lava-bubble" style="width: 20px; height: 20px; left: 10%; top: -10px;"></div>
      <div class="lava-bubble" style="width: 15px; height: 15px; left: 30%; top: -5px; animation-delay: 0.3s;"></div>
@@ -122,7 +150,7 @@
     };
 
     // Game state
-    let player, platforms, lava, gameArea, coinsContainer, asteroidsContainer;
+    let player, platforms, lava, gameArea, coinsContainer;
     let playerX, playerY, velocityY = 0;
     let isJumping = false;
     let score = 0;
@@ -133,34 +161,43 @@
     let gameRunning = true;
     let platformElements = [];
     let coinElements = [];
-    let asteroidElements = [];
-    let asteroidSpawnTimer = null;
     
     // Upgrades
-    let doubleJump = false;
-    let doubleJumpUsed = false;
-    let slowLavaActive = false;
-    let shield = 0;
-    let playerSize = 40;
+    let upgrades = {
+      slowLava: { purchased: false, cost: 50, name: 'Slow Lava', description: 'Lava rises slower' },
+      doubleJump: { purchased: false, cost: 75, name: 'Double Jump', description: 'Jump in mid-air' },
+      doublePlatforms: { purchased: false, cost: 100, name: '2x Platforms', description: 'More platforms!' },
+      ninjaMode: { purchased: false, cost: 80, name: 'Ninja Mode', description: 'Move faster' },
+      energyDrink: { purchased: false, cost: 60, name: 'Energy Drink', description: 'Jump higher' }
+    };
     
     const GRAVITY = 0.5;
     const JUMP_FORCE = -14;
-    const LAVA_RISE_INTERVAL = 5000;
-    const LAVA_RISE_AMOUNT = 40;
+    const PLAYER_SIZE = 40;
+    let LAVA_RISE_INTERVAL = 5000;
+    let LAVA_RISE_AMOUNT = 40;
     const RESET_INTERVAL = 30000;
-    const ASTEROID_SPAWN_INTERVAL = 60000;
+    let PLAYER_SPEED = 15;
+    let JUMP_FORCE_CURRENT = JUMP_FORCE;
     
     function initGame() {
       player = document.getElementById('player');
       platforms = document.getElementById('platforms');
       lava = document.getElementById('lava');
       gameArea = document.getElementById('game-area');
-      coinsContainer = document.getElementById('coins');
-      asteroidsContainer = document.getElementById('asteroids');
+      coinsContainer = document.getElementById('coins-container');
       
       const areaRect = gameArea.getBoundingClientRect();
-      playerX = areaRect.width / 2 - playerSize / 2;
+      playerX = areaRect.width / 2 - PLAYER_SIZE / 2;
       playerY = areaRect.height - 150;
+      
+      // Apply purchased upgrades
+      if (upgrades.slowLava.purchased) {
+        LAVA_RISE_INTERVAL = 8000;
+      }
+      if (upgrades.energyDrink.purchased) {
+        JUMP_FORCE_CURRENT = JUMP_FORCE - 3;
+      }
       
       createPlatforms();
       createCoins();
@@ -169,17 +206,45 @@
       document.addEventListener('keydown', handleKeyDown);
       document.getElementById('restart-btn').addEventListener('click', restartGame);
       document.getElementById('shop-btn').addEventListener('click', openShop);
-      document.getElementById('close-shop-btn').addEventListener('click', closeShop);
-      
-      document.querySelectorAll('.shop-item').forEach(btn => {
-        btn.addEventListener('click', purchaseUpgrade);
-      });
+      document.getElementById('close-shop').addEventListener('click', closeShop);
       
       lavaRiseTimer = setInterval(riseLava, LAVA_RISE_INTERVAL);
       setInterval(updateResetTimer, 1000);
-      asteroidSpawnTimer = setInterval(spawnAsteroid, ASTEROID_SPAWN_INTERVAL);
       
       requestAnimationFrame(gameLoop);
+    }
+    
+    function createCoins() {
+      coinsContainer.innerHTML = '';
+      coinElements = [];
+      
+      const areaRect = gameArea.getBoundingClientRect();
+      const coinPositions = [
+        { x: 100, y: areaRect.height - 180 },
+        { x: areaRect.width - 130, y: areaRect.height - 180 },
+        { x: areaRect.width / 2, y: areaRect.height - 280 },
+        { x: 180, y: areaRect.height - 380 },
+        { x: areaRect.width - 200, y: areaRect.height - 380 },
+        { x: areaRect.width / 2 - 80, y: areaRect.height - 480 },
+        { x: 120, y: areaRect.height - 580 },
+        { x: areaRect.width - 150, y: areaRect.height - 580 },
+      ];
+      
+      coinPositions.forEach((pos, index) => {
+        const coinDiv = document.createElement('div');
+        coinDiv.className = 'coin absolute';
+        coinDiv.style.left = pos.x + 'px';
+        coinDiv.style.top = pos.y + 'px';
+        coinDiv.dataset.coinId = index;
+        coinsContainer.appendChild(coinDiv);
+        coinElements.push({
+          element: coinDiv,
+          x: pos.x,
+          y: pos.y,
+          collected: false,
+          id: index
+        });
+      });
     }
     
     function createPlatforms() {
@@ -187,7 +252,7 @@
       platformElements = [];
       
       const areaRect = gameArea.getBoundingClientRect();
-      const platformConfigs = [
+      let platformConfigs = [
         { x: areaRect.width / 2 - 75, y: areaRect.height - 100, width: 150 },
         { x: 50, y: areaRect.height - 200, width: 120 },
         { x: areaRect.width - 170, y: areaRect.height - 200, width: 120 },
@@ -206,6 +271,14 @@
         { x: areaRect.width / 2 - 45, y: areaRect.height - 650, width: 90 },
       ];
       
+      if (upgrades.doublePlatforms.purchased) {
+        platformConfigs = platformConfigs.concat(platformConfigs.map(p => ({
+          x: p.x + 40,
+          y: p.y - 75,
+          width: p.width
+        })));
+      }
+      
       platformConfigs.forEach(config => {
         const platform = document.createElement('div');
         platform.className = 'platform absolute';
@@ -219,62 +292,8 @@
           x: config.x,
           y: config.y,
           width: config.width,
-          height: 20,
-          timeOnPlatform: 0,
-          visible: true
+          height: 20
         });
-      });
-    }
-    
-    function createCoins() {
-      coinsContainer.innerHTML = '';
-      coinElements = [];
-      
-      const areaRect = gameArea.getBoundingClientRect();
-      const numCoins = 8;
-      
-      for (let i = 0; i < numCoins; i++) {
-        const coin = document.createElement('div');
-        coin.className = 'coin absolute';
-        const x = Math.random() * (areaRect.width - 30);
-        const y = Math.random() * (areaRect.height - 300) + 100;
-        coin.style.left = x + 'px';
-        coin.style.top = y + 'px';
-        coin.style.width = '30px';
-        coin.style.height = '30px';
-        coinsContainer.appendChild(coin);
-        
-        coinElements.push({
-          element: coin,
-          x: x,
-          y: y,
-          width: 30,
-          height: 30,
-          collected: false
-        });
-      }
-    }
-    
-    function spawnAsteroid() {
-      if (!gameRunning) return;
-      
-      const areaRect = gameArea.getBoundingClientRect();
-      const asteroid = document.createElement('div');
-      asteroid.className = 'asteroid absolute';
-      const x = Math.random() * (areaRect.width - 30);
-      asteroid.style.left = x + 'px';
-      asteroid.style.top = '-30px';
-      asteroid.style.width = '30px';
-      asteroid.style.height = '30px';
-      asteroidsContainer.appendChild(asteroid);
-      
-      asteroidElements.push({
-        element: asteroid,
-        x: x,
-        y: -30,
-        width: 30,
-        height: 30,
-        velocityY: 3
       });
     }
     
@@ -282,44 +301,32 @@
       if (e.key === 'ArrowUp' && gameRunning) {
         jump();
       } else if (e.key === 'ArrowLeft' && gameRunning) {
-        playerX -= 15;
+        playerX -= PLAYER_SPEED;
       } else if (e.key === 'ArrowRight' && gameRunning) {
-        playerX += 15;
+        playerX += PLAYER_SPEED;
       }
     }
     
     function jump() {
       if (!isJumping || isOnPlatform()) {
-        velocityY = JUMP_FORCE;
+        velocityY = JUMP_FORCE_CURRENT;
         isJumping = true;
-        doubleJumpUsed = false;
-      } else if (doubleJump && !doubleJumpUsed) {
-        velocityY = JUMP_FORCE;
-        doubleJumpUsed = true;
+      } else if (upgrades.doubleJump.purchased && isJumping) {
+        velocityY = JUMP_FORCE_CURRENT;
       }
     }
     
     function isOnPlatform() {
-      const playerBottom = playerY + playerSize;
+      const playerBottom = playerY + PLAYER_SIZE;
       const playerLeft = playerX;
-      const playerRight = playerX + playerSize;
+      const playerRight = playerX + PLAYER_SIZE;
       
       for (let platform of platformElements) {
-        if (platform.visible && playerBottom >= platform.y && 
+        if (playerBottom >= platform.y && 
             playerBottom <= platform.y + 10 &&
             playerRight > platform.x && 
             playerLeft < platform.x + platform.width &&
             velocityY >= 0) {
-          platform.timeOnPlatform += 1;
-          if (platform.timeOnPlatform > 1200) { // 20 seconds
-            platform.visible = false;
-            platform.element.style.opacity = '0';
-            setTimeout(() => {
-              platform.visible = true;
-              platform.element.style.opacity = '1';
-              platform.timeOnPlatform = 0;
-            }, 10000); // 10 seconds
-          }
           return true;
         }
       }
@@ -327,20 +334,19 @@
     }
     
     function checkPlatformCollision() {
-      const playerBottom = playerY + playerSize;
+      const playerBottom = playerY + PLAYER_SIZE;
       const playerLeft = playerX;
-      const playerRight = playerX + playerSize;
+      const playerRight = playerX + PLAYER_SIZE;
       
       for (let platform of platformElements) {
-        if (platform.visible && playerBottom >= platform.y && 
+        if (playerBottom >= platform.y && 
             playerBottom <= platform.y + 15 &&
             playerRight > platform.x && 
             playerLeft < platform.x + platform.width &&
             velocityY > 0) {
-          playerY = platform.y - playerSize;
+          playerY = platform.y - PLAYER_SIZE;
           velocityY = 0;
           isJumping = false;
-          platform.timeOnPlatform = 0;
           return true;
         }
       }
@@ -348,72 +354,39 @@
     }
     
     function checkCoinCollision() {
-      const playerLeft = playerX;
-      const playerRight = playerX + playerSize;
-      const playerTop = playerY;
-      const playerBottom = playerY + playerSize;
+      const playerCenterX = playerX + PLAYER_SIZE / 2;
+      const playerCenterY = playerY + PLAYER_SIZE / 2;
       
       coinElements.forEach(coin => {
-        if (!coin.collected && 
-            playerRight > coin.x && 
-            playerLeft < coin.x + coin.width &&
-            playerBottom > coin.y && 
-            playerTop < coin.y + coin.height) {
-          coin.collected = true;
-          coin.element.remove();
-          coins += 1;
-          document.getElementById('coin-count').textContent = coins;
-        }
-      });
-    }
-    
-    function checkAsteroidCollision() {
-      const playerLeft = playerX;
-      const playerRight = playerX + playerSize;
-      const playerTop = playerY;
-      const playerBottom = playerY + playerSize;
-      
-      asteroidElements.forEach(asteroid => {
-        if (playerRight > asteroid.x && 
-            playerLeft < asteroid.x + asteroid.width &&
-            playerBottom > asteroid.y && 
-            playerTop < asteroid.y + asteroid.height) {
-          if (shield > 0) {
-            shield--;
-            asteroid.element.remove();
-            asteroidElements = asteroidElements.filter(a => a !== asteroid);
-          } else {
-            gameOver();
+        if (!coin.collected) {
+          const coinCenterX = coin.x + 15;
+          const coinCenterY = coin.y + 15;
+          const distance = Math.sqrt(Math.pow(playerCenterX - coinCenterX, 2) + Math.pow(playerCenterY - coinCenterY, 2));
+          
+          if (distance < 30) {
+            coin.collected = true;
+            coin.element.remove();
+            coins++;
+            score += 5;
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('score').textContent = score;
           }
         }
       });
     }
     
-    function updateAsteroids() {
-      asteroidElements = asteroidElements.filter(asteroid => {
-        asteroid.y += asteroid.velocityY;
-        asteroid.element.style.top = asteroid.y + 'px';
-        
-        if (asteroid.y > gameArea.getBoundingClientRect().height) {
-          asteroid.element.remove();
-          return false;
-        }
-        return true;
-      });
-    }
-    
     function updatePlayerPosition() {
+      const areaRect = gameArea.getBoundingClientRect();
+      if (playerX < 0) playerX = 0;
+      if (playerX > areaRect.width - PLAYER_SIZE) playerX = areaRect.width - PLAYER_SIZE;
+      
       player.style.left = playerX + 'px';
       player.style.top = playerY + 'px';
-      player.style.width = playerSize + 'px';
-      player.style.height = playerSize + 'px';
     }
     
     function riseLava() {
       if (!gameRunning) return;
-      if (!slowLavaActive) {
-        lavaHeight += LAVA_RISE_AMOUNT;
-      }
+      lavaHeight += LAVA_RISE_AMOUNT;
       lava.style.height = lavaHeight + 'px';
       score += 10;
       document.getElementById('score').textContent = score;
@@ -430,7 +403,6 @@
         resetTimer = 30;
         score += 50;
         document.getElementById('score').textContent = score;
-        slowLavaActive = false;
       }
     }
     
@@ -438,7 +410,7 @@
       const areaRect = gameArea.getBoundingClientRect();
       const lavaTop = areaRect.height - lavaHeight;
       
-      if (playerY + playerSize > lavaTop) {
+      if (playerY + PLAYER_SIZE > lavaTop) {
         gameOver();
       }
     }
@@ -446,7 +418,6 @@
     function gameOver() {
       gameRunning = false;
       clearInterval(lavaRiseTimer);
-      clearInterval(asteroidSpawnTimer);
       document.getElementById('final-score').textContent = score;
       document.getElementById('final-coins').textContent = coins;
       document.getElementById('game-over').classList.remove('hidden');
@@ -455,31 +426,29 @@
     function restartGame() {
       gameRunning = true;
       score = 0;
+      coins = 0;
       lavaHeight = 50;
       resetTimer = 30;
       velocityY = 0;
       isJumping = false;
-      doubleJumpUsed = false;
-      slowLavaActive = false;
+      LAVA_RISE_INTERVAL = upgrades.slowLava.purchased ? 8000 : 5000;
+      JUMP_FORCE_CURRENT = upgrades.energyDrink.purchased ? JUMP_FORCE - 3 : JUMP_FORCE;
+      PLAYER_SPEED = upgrades.ninjaMode.purchased ? 25 : 15;
       
       const areaRect = gameArea.getBoundingClientRect();
-      playerX = areaRect.width / 2 - playerSize / 2;
+      playerX = areaRect.width / 2 - PLAYER_SIZE / 2;
       playerY = areaRect.height - 150;
       
       lava.style.height = lavaHeight + 'px';
       document.getElementById('score').textContent = score;
-      document.getElementById('coin-count').textContent = coins;
+      document.getElementById('coins').textContent = coins;
       document.getElementById('timer').textContent = resetTimer;
       document.getElementById('game-over').classList.add('hidden');
-      
-      asteroidsContainer.innerHTML = '';
-      asteroidElements = [];
       
       createPlatforms();
       createCoins();
       
       lavaRiseTimer = setInterval(riseLava, LAVA_RISE_INTERVAL);
-      asteroidSpawnTimer = setInterval(spawnAsteroid, ASTEROID_SPAWN_INTERVAL);
       
       requestAnimationFrame(gameLoop);
     }
@@ -492,64 +461,63 @@
       
       const areaRect = gameArea.getBoundingClientRect();
       
-      if (playerX < 0) playerX = 0;
-      if (playerX > areaRect.width - playerSize) playerX = areaRect.width - playerSize;
-      
       checkPlatformCollision();
       checkCoinCollision();
-      checkAsteroidCollision();
-      updateAsteroids();
       
-      const groundLevel = areaRect.height - lavaHeight - playerSize;
+      const groundLevel = areaRect.height - lavaHeight - PLAYER_SIZE;
       if (playerY > groundLevel) {
         checkLavaCollision();
       }
       
       updatePlayerPosition();
-      checkLavaCollision();
       
       requestAnimationFrame(gameLoop);
     }
     
     function openShop() {
       document.getElementById('shop-panel').classList.remove('hidden');
-      document.getElementById('shop-coins').textContent = coins;
+      renderShopItems();
     }
     
     function closeShop() {
       document.getElementById('shop-panel').classList.add('hidden');
     }
     
-    function purchaseUpgrade(e) {
-      const btn = e.currentTarget;
-      const upgrade = btn.dataset.upgrade;
-      const cost = parseInt(btn.dataset.cost);
+    function renderShopItems() {
+      const shopItems = document.getElementById('shop-items');
+      shopItems.innerHTML = '';
       
-      if (coins < cost) {
-        alert('Not enough coins!');
-        return;
-      }
+      Object.entries(upgrades).forEach(([key, upgrade]) => {
+        const item = document.createElement('div');
+        item.className = 'shop-item';
+        item.innerHTML = `
+          <div>
+            <p class="game-font text-white text-lg">${upgrade.name}</p>
+            <p class="text-sm text-gray-200">${upgrade.description}</p>
+            <p class="game-font text-yellow-400 text-lg">Cost: ${upgrade.cost} 🪙</p>
+          </div>
+          <button class="shop-purchase-btn" data-upgrade="${key}" ${upgrade.purchased ? 'disabled' : ''}>
+            ${upgrade.purchased ? '✓' : 'Buy'}
+          </button>
+        `;
+        shopItems.appendChild(item);
+      });
       
-      coins -= cost;
-      document.getElementById('shop-coins').textContent = coins;
-      document.getElementById('coin-count').textContent = coins;
-      
-      switch(upgrade) {
-        case 'double-jump':
-          doubleJump = true;
-          btn.disabled = true;
-          btn.textContent = '✓ Purchased';
-          break;
-        case 'slow-lava':
-          slowLavaActive = true;
-          setTimeout(() => { slowLavaActive = false; }, 30000);
-          break;
-        case 'shield':
-          shield += 1;
-          break;
-        case 'bigger-player':
-          playerSize = 60;
-          break;
+      document.querySelectorAll('.shop-purchase-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const upgradeKey = e.target.dataset.upgrade;
+          purchaseUpgrade(upgradeKey);
+        });
+      });
+    }
+    
+    function purchaseUpgrade(upgradeKey) {
+      const upgrade = upgrades[upgradeKey];
+      if (coins >= upgrade.cost && !upgrade.purchased) {
+        coins -= upgrade.cost;
+        upgrade.purchased = true;
+        document.getElementById('coins').textContent = coins;
+        renderShopItems();
       }
     }
     
@@ -574,5 +542,5 @@
     // Initialize game when DOM is ready
     document.addEventListener('DOMContentLoaded', initGame);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d512da0c52bb3aa',t:'MTc3MjI5NDg4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d515204d07341f9',t:'MTc3MjI5NjM3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
